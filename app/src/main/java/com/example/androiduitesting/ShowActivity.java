@@ -2,13 +2,12 @@ package com.example.androiduitesting;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class CityScreen extends AppCompatActivity {
+public class ShowActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +20,6 @@ public class CityScreen extends AppCompatActivity {
         String cityName = intent.getStringExtra("city");
         cityText.setText(cityName);
 
-        backButton.setOnClickListener(view -> CityScreen.this.finish());
+        backButton.setOnClickListener(view -> ShowActivity.this.finish());
     }
 }

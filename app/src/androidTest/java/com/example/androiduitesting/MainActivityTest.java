@@ -5,6 +5,8 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -13,7 +15,10 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+
+import static org.junit.Assert.assertTrue;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
@@ -74,7 +79,47 @@ public class MainActivityTest {
 
     @Test
     public void testOpenActivity() {
-        onView(withId(R.id.city_list)).perform(click());
+        Intents.init();
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Edmonton"));
+        onView(withId(R.id.button_confirm)).perform(click());
+        onData(is(instanceOf(String.class)))
+                .inAdapterView(withId(R.id.city_list))
+                .atPosition(0)
+                .perform(click());
+        intended(hasComponent(ShowActivity.class.getName()));
+        Intents.release();
+    }
+
+    @Test
+    public void testCityName() {
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Edmonton"));
+        onView(withId(R.id.button_confirm)).perform(click());
+        onData(is(instanceOf(String.class)))
+                .inAdapterView(withId(R.id.city_list))
+                .atPosition(0)
+                .perform(click());
+        onView(withId(R.id.city_text))
+                .check(matches(withText("Edmonton")));
+    }
+
+    @Test
+    public void testBackButton() {
+        Intents.init();
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Edmonton"));
+        onView(withId(R.id.button_confirm)).perform(click());
+        onData(is(instanceOf(String.class)))
+                .inAdapterView(withId(R.id.city_list))
+                .atPosition(0)
+                .perform(click());
+        intended(hasComponent(ShowActivity.class.getName()));
+        onView(withId(R.id.back_button)).perform(click());
+        scenario.getScenario().onActivity(activity -> {
+            assertTrue(activity instanceof MainActivity);
+        });
+        Intents.release();
     }
 
 
